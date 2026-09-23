@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Trash · {{ app_name }}{% endblock %}
+{% block content %}
+<section class="journal-list">
+  <a class="back-link" href="/">← Dashboard</a>
+  <div class="section-heading">
+    <p class="eyebrow">Trash</p>
+    <h1>Deleted journals</h1>
+  </div>
+  {% for journal in journals %}
+    <article class="journal-card">
+      <time datetime="{{ journal.deleted_at.isoformat() if journal.deleted_at else journal.updated_at.isoformat() }}">
+        Deleted {{ journal.deleted_at.strftime("%Y-%m-%d %H:%M") if journal.deleted_at else "" }}
+      </time>
+      {% if journal.title %}<h2>{{ journal.title }}</h2>{% endif %}
+      <p>{{ journal.content[:240] }}</p>
+      <div class="trash-actions">
+        <form method="post" action="/journals/{{ journal.id }}/restore">
+          <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
+          <button class="text-button" type="submit">Restore</button>
+        </form>
+        <form method="post" action="/journals/{{ journal.id }}/permanent-delete" data-confirm-delete>
+          <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
+          <button class="text-button danger-button" type="submit">Delete permanently</button>
+        </form>
+      </div>
+    </article>
+  {% else %}
+    <p class="muted">Trash is empty.</p>
+  {% endfor %}
+</section>
+{% endblock %}

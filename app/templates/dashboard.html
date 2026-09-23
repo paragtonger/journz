@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard · {{ app_name }}{% endblock %}
+
+{% block content %}
+<section class="welcome">
+  <p class="eyebrow">Welcome back, {{ user.display_name }}</p>
+  <h1>What’s on your mind?</h1>
+  <form class="composer" method="post" action="/journals">
+    <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
+    <label class="sr-only" for="content">Write a journal entry</label>
+    <textarea id="content" name="content" rows="7" maxlength="100000" autofocus placeholder="Start writing..."></textarea>
+    <button class="primary-button" type="submit">Save entry</button>
+  </form>
+</section>
+
+<section class="journal-list" aria-label="Recent journals">
+  <form class="filters" method="get" action="/">
+    <label class="sr-only" for="search">Search journals</label>
+    <input id="search" name="q" value="{{ query }}" placeholder="Search journals...">
+    <label class="sr-only" for="tag">Filter by tag</label>
+    <select id="tag" name="tag">
+      <option value="">All tags</option>
+      {% for item in tags %}
+        <option value="{{ item.name }}" {% if selected_tag|lower == item.name|lower %}selected{% endif %}>#{{ item.name }}</option>
+      {% endfor %}
+    </select>
+    <label class="sr-only" for="sort">Sort journals</label>
+    <select id="sort" name="sort">
+      <option value="updated_desc" {% if selected_sort == "updated_desc" %}selected{% endif %}>Newest first</option>
+      <option value="updated_asc" {% if selected_sort == "updated_asc" %}selected{% endif %}>Oldest first</option>
+      <option value="title_asc" {% if selected_sort == "title_asc" %}selected{% endif %}>Title A–Z</option>
+      <option value="title_desc" {% if selected_sort == "title_desc" %}selected{% endif %}>Title Z–A</option>
+    </select>
+    <button class="text-button" type="submit">Apply</button>
+  </form>
+  <div class="section-heading"><p class="eyebrow">Recent journals</p></div>
+  {% for journal in journals %}
+    <article class="journal-card">
+      <a class="journal-card-link" href="/journals/{{ journal.id }}">
+      <time datetime="{{ journal.updated_at.isoformat() }}">{{ journal.updated_at.strftime("%Y-%m-%d %H:%M") }}</time>
+      {% if journal.title %}<h2>{{ journal.title }}</h2>{% endif %}
+      <p>{{ journal.content[:240] }}</p>
+      {% if journal.tags %}
+        <div class="tag-list">{% for item in journal.tags %}<span>#{{ item.name }}</span>{% endfor %}</div>
+      {% endif %}
+      </a>
+    </article>
+  {% else %}
+    <p class="muted">Your saved thoughts will appear here.</p>
+  {% endfor %}
+  <nav class="pagination" aria-label="Journal pages">
+    {% if page > 1 %}
+      <a href="?q={{ query|urlencode }}&tag={{ selected_tag|urlencode }}&sort={{ selected_sort }}&page={{ page - 1 }}">← Newer</a>
+    {% endif %}
+    {% if has_next_page %}
+      <a href="?q={{ query|urlencode }}&tag={{ selected_tag|urlencode }}&sort={{ selected_sort }}&page={{ page + 1 }}">Older →</a>
+    {% endif %}
+  </nav>
+</section>
+{% endblock %}

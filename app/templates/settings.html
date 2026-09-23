@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Settings · {{ app_name }}{% endblock %}
+{% block content %}
+<section class="auth-panel">
+  <a class="back-link" href="/">← Dashboard</a>
+  <p class="eyebrow">Preferences</p>
+  <h1>Make Journz yours.</h1>
+  <form method="post" class="stacked-form">
+    <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
+    <label for="theme_preference">Theme
+      <select id="theme_preference" name="theme_preference">
+        <option value="system" {% if user.theme_preference == "system" %}selected{% endif %}>System</option>
+        <option value="light" {% if user.theme_preference == "light" %}selected{% endif %}>Light</option>
+        <option value="dark" {% if user.theme_preference == "dark" %}selected{% endif %}>Dark</option>
+      </select>
+    </label>
+    <button class="primary-button" type="submit">Save preferences</button>
+  </form>
+</section>
+{% endblock %}

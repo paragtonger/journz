@@ -1,0 +1,2 @@
+"""Journz application package."""
+

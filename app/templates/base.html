@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en" data-theme="{{ user.theme_preference if user else 'system' }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{{ app_name }}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/app.css') }}">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="wordmark" href="/">{{ app_name }}</a>
+      <nav aria-label="Primary navigation">
+        {% if user %}
+          <a href="/">Dashboard</a>
+          <a href="/trash">Trash</a>
+          <a href="/settings">Settings</a>
+          <form method="post" action="/logout">
+            <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
+            <button class="link-button" type="submit">Log out</button>
+          </form>
+        {% else %}
+          <a href="/login">Log in</a>
+        {% endif %}
+      </nav>
+    </header>
+    <main class="page-shell" id="main-content">
+      {% block content %}{% endblock %}
+    </main>
+    <script src="{{ url_for('static', path='js/app.js') }}" defer></script>
+  </body>
+</html>
