@@ -41,10 +41,10 @@ Live app: [journz.onrender.com](https://journz.onrender.com)
 The app currently uses SQLite for local development. A PostgreSQL database will
 be added for production storage on Render.
 
-## Run locally on Windows
+## Run locally
 
-From `C:\Users\ptx\Projects\journz`, create the virtual environment and install
-the dependencies:
+From the project directory, create the virtual environment and install the
+dependencies:
 
 ```bash
 uv venv .venv
